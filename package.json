@@ -1,5 +1,5 @@
 {
-  "version": "0.5.1",
+  "version": "0.5.2",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -47,14 +47,14 @@
     "scroll",
     "mouse"
   ],
-  "module": "dist/react-use-draggable-scroll.esm.js",
+  "module": "dist/react-use-draggable-scroll-safe.esm.js",
   "size-limit": [
     {
-      "path": "dist/react-use-draggable-scroll.cjs.production.min.js",
+      "path": "dist/react-use-draggable-scroll-safe.cjs.production.min.js",
       "limit": "10 KB"
     },
     {
-      "path": "dist/react-use-draggable-scroll.esm.js",
+      "path": "dist/react-use-draggable-scroll-safe.esm.js",
       "limit": "10 KB"
     }
   ],
