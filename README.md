@@ -1,6 +1,9 @@
-# useDraggable Hook
+# useDraggable Hook (Safe version)
 
-[![NPM Version](https://img.shields.io/npm/v/react-use-draggable-scroll)](https://www.npmjs.com/package/react-use-draggable-scroll)
+## This is a fork based on the great work by [rfmiotto](https://github.com/rfmiotto)
+The main difference is that this version does not crash when passed a null or undefined reference (ref) therefore makes it suitable for use in conditionally rendederd components.
+
+[![NPM Version](https://img.shields.io/npm/v/react-use-draggable-scroll-safe)](https://www.npmjs.com/package/react-use-draggable-scroll-safe)
 
 useDraggable is a React hook that allows a wrapping div to have a draggable scroll with an inertial effect.
 It is completely unstyled and just adds the functionality you are looking for so your application gives
