@@ -33,7 +33,7 @@
     "singleQuote": false,
     "trailingComma": "es5"
   },
-  "name": "react-use-draggable-scroll",
+  "name": "react-use-draggable-scroll-safe",
   "author": "Vahid Amiri Motlagh",
   "repository": {
     "type": "git",
