@@ -22,11 +22,7 @@ are not re-rendered, resulting in a better performance.
 ### Installation
 
 ```console
-yarn add react-use-draggable-scroll
-```
-
-```console
-npm install react-use-draggable-scroll
+npm install react-use-draggable-scroll-safe
 ```
 
 ### How to use
