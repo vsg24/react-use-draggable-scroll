@@ -1,5 +1,4 @@
 import { MutableRefObject, useEffect, useRef } from "react";
-
 import useLayoutEffect from "./useIsomorphicLayoutEffect";
 
 type OptionsType = {
@@ -17,7 +16,7 @@ type ReturnType = {
 };
 
 export function useDraggable(
-  ref: MutableRefObject<HTMLElement>,
+  ref: MutableRefObject<HTMLElement | null>,
   {
     decayRate = 0.95,
     safeDisplacement = 10,
@@ -52,7 +51,7 @@ export function useDraggable(
   const timing = (1 / 60) * 1000; // period of most monitors (60fps)
 
   useLayoutEffect(() => {
-    if (isMounted) {
+    if (isMounted && ref.current) {
       isScrollableAlongX =
         window.getComputedStyle(ref.current).overflowX === "scroll";
       isScrollableAlongY =
@@ -87,21 +86,27 @@ export function useDraggable(
         }
       );
     }
-  }, [isMounted]);
+  }, [isMounted, ref]);
 
   const runScroll = () => {
-    const dx = internalState.current.scrollSpeedX * timing;
-    const dy = internalState.current.scrollSpeedY * timing;
-    const offsetX = ref.current.scrollLeft + dx;
-    const offsetY = ref.current.scrollTop + dy;
+    if (ref.current) {
+      const dx = internalState.current.scrollSpeedX * timing;
+      const dy = internalState.current.scrollSpeedY * timing;
+      const offsetX = ref.current.scrollLeft + dx;
+      const offsetY = ref.current.scrollTop + dy;
 
-    ref.current.scrollLeft = offsetX; // eslint-disable-line no-param-reassign
-    ref.current.scrollTop = offsetY; // eslint-disable-line no-param-reassign
-    internalState.current.lastScrollX = offsetX;
-    internalState.current.lastScrollY = offsetY;
+      // eslint-disable-next-line no-param-reassign
+      ref.current.scrollLeft = offsetX;
+      // eslint-disable-next-line no-param-reassign
+      ref.current.scrollTop = offsetY;
+      internalState.current.lastScrollX = offsetX;
+      internalState.current.lastScrollY = offsetY;
+    }
   };
 
   const rubberBandCallback = (e: MouseEvent) => {
+    if (!ref.current) return;
+
     const dx = e.clientX - internalState.current.initialMouseX;
     const dy = e.clientY - internalState.current.initialMouseY;
 
@@ -135,21 +140,27 @@ export function useDraggable(
         Math.log10(1.0 + (0.5 * Math.abs(dy)) / clientHeight);
     }
 
-    (ref.current.childNodes as NodeListOf<HTMLOptionElement>).forEach(
-      (child: HTMLElement) => {
-        child.style.transform = `translate3d(${displacementX}px, ${displacementY}px, 0px)`; // eslint-disable-line no-param-reassign
-        child.style.transition = "transform 0ms"; // eslint-disable-line no-param-reassign
+    Array.from(ref.current.childNodes).forEach((child) => {
+      if (child instanceof HTMLElement) {
+        // eslint-disable-next-line no-param-reassign
+        child.style.transform = `translate3d(${displacementX}px, ${displacementY}px, 0px)`;
+        // eslint-disable-next-line no-param-reassign
+        child.style.transition = "transform 0ms";
       }
-    );
+    });
   };
 
   const recoverChildStyle = () => {
-    (ref.current.childNodes as NodeListOf<HTMLOptionElement>).forEach(
-      (child: HTMLElement, i) => {
-        child.style.transform = transformStyleOfChildElements[i]; // eslint-disable-line no-param-reassign
-        child.style.transition = transitionStyleOfChildElements[i]; // eslint-disable-line no-param-reassign
+    if (!ref.current) return;
+
+    Array.from(ref.current.childNodes).forEach((child, i) => {
+      if (child instanceof HTMLElement) {
+        // eslint-disable-next-line no-param-reassign
+        child.style.transform = transformStyleOfChildElements[i];
+        // eslint-disable-next-line no-param-reassign
+        child.style.transition = transitionStyleOfChildElements[i];
       }
-    );
+    });
   };
 
   let rubberBandAnimationTimer: NodeJS.Timeout;
@@ -157,9 +168,13 @@ export function useDraggable(
   let keepMovingY: NodeJS.Timer;
 
   const callbackMomentum = () => {
+    if (!ref.current) return;
+
     const minimumSpeedToTriggerMomentum = 0.05;
 
     keepMovingX = setInterval(() => {
+      if (!ref.current) return;
+
       const lastScrollSpeedX = internalState.current.scrollSpeedX;
       const newScrollSpeedX = lastScrollSpeedX * decayRate;
       internalState.current.scrollSpeedX = newScrollSpeedX;
@@ -181,6 +196,8 @@ export function useDraggable(
     }, timing);
 
     keepMovingY = setInterval(() => {
+      if (!ref.current) return;
+
       const lastScrollSpeedY = internalState.current.scrollSpeedY;
       const newScrollSpeedY = lastScrollSpeedY * decayRate;
       internalState.current.scrollSpeedY = newScrollSpeedY;
@@ -224,7 +241,6 @@ export function useDraggable(
   const preventClick = (e: Event) => {
     e.preventDefault();
     e.stopImmediatePropagation();
-    // e.stopPropagation();
   };
 
   const getIsMousePressActive = (buttonsCode: number) => {
@@ -237,7 +253,7 @@ export function useDraggable(
 
   const onMouseDown = (e: React.MouseEvent<HTMLElement>) => {
     const isMouseActive = getIsMousePressActive(e.buttons);
-    if (!isMouseActive) {
+    if (!isMouseActive || !ref.current) {
       return;
     }
 
@@ -249,6 +265,8 @@ export function useDraggable(
   };
 
   const onMouseUp = (e: MouseEvent) => {
+    if (!ref.current) return;
+
     const isDragging =
       internalState.current.isDraggingX || internalState.current.isDraggingY;
 
@@ -274,12 +292,14 @@ export function useDraggable(
     internalState.current.lastMouseX = 0;
     internalState.current.lastMouseY = 0;
 
-    ref.current.style.cursor = cursorStyleOfWrapperElement; // eslint-disable-line no-param-reassign
-    (ref.current.childNodes as NodeListOf<HTMLOptionElement>).forEach(
-      (child: HTMLElement, i) => {
-        child.style.cursor = cursorStyleOfChildElements[i]; // eslint-disable-line no-param-reassign
+    // eslint-disable-next-line no-param-reassign
+    ref.current.style.cursor = cursorStyleOfWrapperElement;
+    Array.from(ref.current.childNodes).forEach((child, i) => {
+      if (child instanceof HTMLElement) {
+        // eslint-disable-next-line no-param-reassign
+        child.style.cursor = cursorStyleOfChildElements[i];
       }
-    );
+    });
 
     if (isDraggingConfirmed) {
       callbackMomentum();
@@ -287,7 +307,7 @@ export function useDraggable(
   };
 
   const onMouseMove = (e: MouseEvent) => {
-    if (!internalState.current.isMouseDown) {
+    if (!internalState.current.isMouseDown || !ref.current) {
       return;
     }
 
@@ -305,12 +325,14 @@ export function useDraggable(
     internalState.current.scrollSpeedY = dy / timing;
     internalState.current.isDraggingY = true;
 
-    ref.current.style.cursor = "grabbing"; // eslint-disable-line no-param-reassign
-    (ref.current.childNodes as NodeListOf<HTMLOptionElement>).forEach(
-      (child: HTMLElement) => {
-        child.style.cursor = "grabbing"; // eslint-disable-line no-param-reassign
+    // eslint-disable-next-line no-param-reassign
+    ref.current.style.cursor = "grabbing";
+    Array.from(ref.current.childNodes).forEach((child) => {
+      if (child instanceof HTMLElement) {
+        // eslint-disable-next-line no-param-reassign
+        child.style.cursor = "grabbing";
       }
-    );
+    });
 
     const isAtLeft = ref.current.scrollLeft <= 0 && isScrollableAlongX;
     const isAtRight =
@@ -328,8 +350,10 @@ export function useDraggable(
   };
 
   const handleResize = () => {
-    maxHorizontalScroll = ref.current.scrollWidth - ref.current.clientWidth;
-    maxVerticalScroll = ref.current.scrollHeight - ref.current.clientHeight;
+    if (ref.current) {
+      maxHorizontalScroll = ref.current.scrollWidth - ref.current.clientWidth;
+      maxVerticalScroll = ref.current.scrollHeight - ref.current.clientHeight;
+    }
   };
 
   useEffect(() => {
