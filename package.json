@@ -1,5 +1,5 @@
 {
-  "version": "0.5.0",
+  "version": "0.5.1",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -37,9 +37,9 @@
   "author": "Vahid Amiri Motlagh",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vsg24/react-use-draggable-scroll.git"
+    "url": "https://github.com/vsg24/react-use-draggable-scroll-safe.git"
   },
-  "homepage": "https://github.com/vsg24/react-use-draggable-scroll",
+  "homepage": "https://github.com/vsg24/react-use-draggable-scroll-safe",
   "keywords": [
     "react",
     "hook",
