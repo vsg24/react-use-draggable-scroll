@@ -295,7 +295,7 @@ export function useDraggable(
     // eslint-disable-next-line no-param-reassign
     ref.current.style.cursor = cursorStyleOfWrapperElement;
     Array.from(ref.current.childNodes).forEach((child, i) => {
-      if (child instanceof HTMLElement && cursorStyleOfChildElements[i]) {
+      if (child instanceof HTMLElement && cursorStyleOfChildElements) {
         // eslint-disable-next-line no-param-reassign
         child.style.cursor = cursorStyleOfChildElements[i];
       }
