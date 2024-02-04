@@ -1,6 +1,6 @@
 # useDraggable Hook (Safe version)
 
-## This is a fork based on the great work by [rfmiotto](https://github.com/rfmiotto)
+## This is a fork based on the great work by [rfmiotto](https://github.com/rfmiotto) and the updated version by [kasparas-ban](https://github.com/kasparas-ban)
 The main difference is that this version does not crash when passed a null or undefined reference (ref) therefore makes it suitable for use in conditionally rendederd components.
 
 [![NPM Version](https://img.shields.io/npm/v/react-use-draggable-scroll-safe)](https://www.npmjs.com/package/react-use-draggable-scroll-safe)
